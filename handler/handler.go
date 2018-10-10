@@ -29,20 +29,20 @@ type Server struct {
 }
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	s.Router.GET("/", s.getAll)
-	s.Router.GET("/:id", s.get)
-	s.Router.POST("/", s.add)
-	s.Router.PATCH("/:id", s.edit)
-	s.Router.PUT("/:id/done", s.markAsDone)
-	s.Router.DELETE("/:id", s.delete)
-	s.Router.DELETE("/", s.deleteFinished)
+	s.Router.GET("/", s.GetTodos)
+	s.Router.GET("/:id", s.Get)
+	s.Router.POST("/", s.Add)
+	s.Router.PATCH("/:id", s.Edit)
+	s.Router.PUT("/:id/done", s.MarkAsDone)
+	s.Router.DELETE("/:id", s.Delete)
+	s.Router.DELETE("/", s.DeleteFinished)
 
 	s.Router.ServeHTTP(w, req)
 }
 
 // Get is a handler for GET "/:id" route. It will return a Todo with specified
 // ID if exists. It will return an error otherwise.
-func (s *Server) get(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (s *Server) Get(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	id, err := strconv.Atoi(ps.ByName("id"))
 	if err != nil {
 		respondWithErrorInJSON(w, http.StatusBadRequest, errors.New("cannot parse id"))
@@ -58,12 +58,12 @@ func (s *Server) get(w http.ResponseWriter, r *http.Request, ps httprouter.Param
 	respondInJSON(w, http.StatusOK, todo)
 }
 
-// GetAll is a handler for GET "/" route. It will return an array of Todos.
+// GetTodos is a handler for GET "/" route. It will return an array of Todos.
 //
 // A query string called "done" can also exist on the request. This query string
 // should be either "true" or "false". "true" means that user wants to get all
 // finished Todos; "false" otherwise.
-func (s *Server) getAll(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (s *Server) GetTodos(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	var todos []*gotodo.Todo
 
 	done, ok := r.URL.Query()["done"]
@@ -85,7 +85,7 @@ func (s *Server) getAll(w http.ResponseWriter, r *http.Request, ps httprouter.Pa
 // from the gotodo.Service. It returns an error if such error occurs.
 //
 // Add will only respect .title and .description from the JSON request body.
-func (s *Server) add(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (s *Server) Add(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	defer r.Body.Close()
 
 	todo := &gotodo.Todo{}
@@ -103,14 +103,14 @@ func (s *Server) add(w http.ResponseWriter, r *http.Request, ps httprouter.Param
 	respondInJSON(w, http.StatusCreated, todo)
 }
 
-// Edit is a handler for PATCH "/:id" route to edit a Todo. It receives a JSON
+// Edit is a handler for PATCH "/:id" route to Edit a Todo. It receives a JSON
 // which corresponds a Todo structure, applies the new values to the old values
 // using gotodo.Service, and returns back the Todo from the service. It returns
 // an error if such error occurs.
 //
 // It will only respect .title and .description attribute, as .done is modified
 // only through MarkAsDone, as the gotodo package requests.
-func (s *Server) edit(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (s *Server) Edit(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	id, err := strconv.Atoi(ps.ByName("id"))
 	if err != nil {
 		respondWithErrorInJSON(w, http.StatusBadRequest, errors.New("cannot parse id"))
@@ -151,7 +151,7 @@ func (s *Server) edit(w http.ResponseWriter, r *http.Request, ps httprouter.Para
 // MarkAsDone is a handler for PUT "/:id/done" route to mark a Todo as done.
 // It receives an empty request and returns the marked Todo from the service,
 // or an error if such error exists.
-func (s *Server) markAsDone(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (s *Server) MarkAsDone(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	id, err := strconv.Atoi(ps.ByName("id"))
 	if err != nil {
 		respondWithErrorInJSON(w, http.StatusBadRequest, errors.New("cannot parse id"))
@@ -173,9 +173,9 @@ func (s *Server) markAsDone(w http.ResponseWriter, r *http.Request, ps httproute
 	respondInJSON(w, http.StatusOK, todo)
 }
 
-// Delete is a handler for DELETE "/:id" route to delete a Todo. It will return
+// Delete is a handler for DELETE "/:id" route to Delete a Todo. It will return
 // an error if such error exists.
-func (s *Server) delete(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (s *Server) Delete(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	id, err := strconv.Atoi(ps.ByName("id"))
 	if err != nil {
 		respondWithErrorInJSON(w, http.StatusBadRequest, errors.New("cannot parse id"))
@@ -200,7 +200,7 @@ func (s *Server) delete(w http.ResponseWriter, r *http.Request, ps httprouter.Pa
 // DeleteFinished is a handler for DELETE "/" route to delete all finished
 // Todos. It must receive a "done" query string with "true" value; otherwise,
 // it will return an error message.
-func (s *Server) deleteFinished(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (s *Server) DeleteFinished(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	done, ok := r.URL.Query()["done"]
 	if !ok || done[0] != "true" {
 		respondWithErrorInJSON(w, http.StatusBadRequest, errors.New("?done=true should be set"))
