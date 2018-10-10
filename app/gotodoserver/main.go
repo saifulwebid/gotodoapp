@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/julienschmidt/httprouter"
 	"github.com/subosito/gotenv"
 
 	"github.com/saifulwebid/gotodo"
@@ -23,10 +22,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	sv := &handler.Server{
-		Service: gotodo.NewService(db),
-		Router:  httprouter.New(),
-	}
+	sv := handler.NewServer(gotodo.NewService(db))
 
 	log.Fatal(http.ListenAndServe(":"+os.Getenv("GOTODO_API_PORT"), sv))
 }
