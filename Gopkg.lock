@@ -35,14 +35,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:4edc1121133487378891b208ff1c02da8e37a54f6f4a90c56540445fa55404fa"
+  digest = "1:68431478af546dc5add35de5b4f216b706e5c732a0cb0f46dab6b5a4d9434546"
   name = "github.com/saifulwebid/gotodo"
   packages = [
     ".",
     "database",
   ]
   pruneopts = "UT"
-  revision = "06dc06e91abe632d13df655a5dfd07b4741fd036"
+  revision = "1afdae9b03e9a42bbe04cd196c1f75da2955489f"
 
 [[projects]]
   digest = "1:bb0d999fbfbc40f7bf42a24eca5e6894fa24a9efdad13d6908bea34bc3309722"
