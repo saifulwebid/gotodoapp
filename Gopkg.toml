@@ -32,3 +32,7 @@
 [[constraint]]
   branch = "master"
   name = "github.com/saifulwebid/gotodo"
+
+[[constraint]]
+  name = "gopkg.in/urfave/cli.v1"
+  version = "1.20.0"
