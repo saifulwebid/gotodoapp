@@ -11,6 +11,13 @@ import (
 
 type server struct {
 	service gotodo.Service
+	router  *httprouter.Router
+}
+
+func (s *server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	s.router.ServeHTTP(w, req)
 }
 
 // Get is a handler for GET "/:id" route. It will return a Todo with specified
