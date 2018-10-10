@@ -29,6 +29,15 @@ type Server struct {
 }
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	s.Router.ServeHTTP(w, req)
+}
+
+func NewServer(svc gotodo.Service) *Server {
+	s := &Server{
+		Service: svc,
+		Router:  httprouter.New(),
+	}
+
 	s.Router.GET("/", s.GetTodos)
 	s.Router.GET("/:id", s.Get)
 	s.Router.POST("/", s.Add)
@@ -37,7 +46,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	s.Router.DELETE("/:id", s.Delete)
 	s.Router.DELETE("/", s.DeleteFinished)
 
-	s.Router.ServeHTTP(w, req)
+	return s
 }
 
 // Get is a handler for GET "/:id" route. It will return a Todo with specified
