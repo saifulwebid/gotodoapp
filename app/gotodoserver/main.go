@@ -22,17 +22,15 @@ func main() {
 		log.Fatal(err)
 	}
 
-	sv := &server{gotodo.NewService(db)}
+	sv := &server{gotodo.NewService(db), httprouter.New()}
 
-	router := httprouter.New()
+	sv.router.GET("/", sv.getAll)
+	sv.router.GET("/:id", sv.get)
+	sv.router.POST("/", sv.add)
+	sv.router.PATCH("/:id", sv.edit)
+	sv.router.PUT("/:id/done", sv.markAsDone)
+	sv.router.DELETE("/:id", sv.delete)
+	sv.router.DELETE("/", sv.deleteFinished)
 
-	router.GET("/", sv.getAll)
-	router.GET("/:id", sv.get)
-	router.POST("/", sv.add)
-	router.PATCH("/:id", sv.edit)
-	router.PUT("/:id/done", sv.markAsDone)
-	router.DELETE("/:id", sv.delete)
-	router.DELETE("/", sv.deleteFinished)
-
-	log.Fatal(http.ListenAndServe(":"+os.Getenv("GOTODO_API_PORT"), router))
+	log.Fatal(http.ListenAndServe(":"+os.Getenv("GOTODO_API_PORT"), sv))
 }
