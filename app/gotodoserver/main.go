@@ -10,6 +10,7 @@ import (
 
 	"github.com/saifulwebid/gotodo"
 	"github.com/saifulwebid/gotodo/database"
+	"github.com/saifulwebid/gotodoapp/handler"
 )
 
 func init() {
@@ -22,15 +23,10 @@ func main() {
 		log.Fatal(err)
 	}
 
-	sv := &server{gotodo.NewService(db), httprouter.New()}
-
-	sv.router.GET("/", sv.getAll)
-	sv.router.GET("/:id", sv.get)
-	sv.router.POST("/", sv.add)
-	sv.router.PATCH("/:id", sv.edit)
-	sv.router.PUT("/:id/done", sv.markAsDone)
-	sv.router.DELETE("/:id", sv.delete)
-	sv.router.DELETE("/", sv.deleteFinished)
+	sv := &handler.Server{
+		Service: gotodo.NewService(db),
+		Router:  httprouter.New(),
+	}
 
 	log.Fatal(http.ListenAndServe(":"+os.Getenv("GOTODO_API_PORT"), sv))
 }
