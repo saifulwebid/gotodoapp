@@ -10,9 +10,11 @@ import (
 	"github.com/subosito/gotenv"
 )
 
-func main() {
+func init() {
 	gotenv.Load()
+}
 
+func main() {
 	router := httprouter.New()
 
 	router.GET("/", func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
