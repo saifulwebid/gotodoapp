@@ -164,6 +164,14 @@ func delete(c *cli.Context) error {
 	return nil
 }
 
+func deleteFinished(c *cli.Context) error {
+	service.DeleteFinished()
+
+	fmt.Println("all finished todo are deleted")
+
+	return nil
+}
+
 func main() {
 	db, err := database.NewRepository()
 	if err != nil {
@@ -223,6 +231,11 @@ func main() {
 			Name:   "delete",
 			Usage:  "delete a todo from the database",
 			Action: delete,
+		},
+		{
+			Name:   "delete-finished",
+			Usage:  "delete all finished todos from the database",
+			Action: deleteFinished,
 		},
 	}
 
