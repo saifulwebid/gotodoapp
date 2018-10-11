@@ -39,15 +39,7 @@ func getAll(c *cli.Context) error {
 }
 
 func get(c *cli.Context) error {
-	idStr := c.Args().Get(0)
-	if idStr == "" {
-		log.Fatal("ID argument must not be blank")
-	}
-
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		log.Fatal(err)
-	}
+	id := parseIDFromCli(c)
 
 	todo, err := service.Get(id)
 	if err != nil {
@@ -76,15 +68,7 @@ func edit(c *cli.Context) error {
 		log.Fatal("No --title or --description set; exiting")
 	}
 
-	idStr := c.Args().Get(0)
-	if idStr == "" {
-		log.Fatal("ID argument must not be blank")
-	}
-
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		log.Fatal(err)
-	}
+	id := parseIDFromCli(c)
 
 	todo, err := service.Get(id)
 	if err != nil {
@@ -111,15 +95,7 @@ func edit(c *cli.Context) error {
 }
 
 func markAsDone(c *cli.Context) error {
-	idStr := c.Args().Get(0)
-	if idStr == "" {
-		log.Fatal("ID argument must not be blank")
-	}
-
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		log.Fatal(err)
-	}
+	id := parseIDFromCli(c)
 
 	todo, err := service.Get(id)
 	if err != nil {
@@ -138,15 +114,7 @@ func markAsDone(c *cli.Context) error {
 }
 
 func delete(c *cli.Context) error {
-	idStr := c.Args().Get(0)
-	if idStr == "" {
-		log.Fatal("ID argument must not be blank")
-	}
-
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		log.Fatal(err)
-	}
+	id := parseIDFromCli(c)
 
 	todo, err := service.Get(id)
 	if err != nil {
@@ -271,4 +239,18 @@ func todosToString(todos []*gotodo.Todo) string {
 	}
 
 	return ret
+}
+
+func parseIDFromCli(c *cli.Context) int {
+	idStr := c.Args().Get(0)
+	if idStr == "" {
+		log.Fatal("ID argument must not be blank")
+	}
+
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return id
 }
