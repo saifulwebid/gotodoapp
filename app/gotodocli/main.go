@@ -59,6 +59,18 @@ func get(c *cli.Context) error {
 	return nil
 }
 
+func create(c *cli.Context) error {
+	todo, err := service.Add(c.String("title"), c.String("description"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Created todo:")
+	fmt.Println(todoToString(todo))
+
+	return nil
+}
+
 func main() {
 	db, err := database.NewRepository()
 	if err != nil {
@@ -70,6 +82,14 @@ func main() {
 	doneFlags := []cli.Flag{
 		cli.BoolFlag{
 			Name: "done, d",
+		},
+	}
+	todoFlags := []cli.Flag{
+		cli.StringFlag{
+			Name: "title, t",
+		},
+		cli.StringFlag{
+			Name: "description, desc, d",
 		},
 	}
 
@@ -88,6 +108,12 @@ func main() {
 			Name:   "get",
 			Usage:  "get a todo from the database",
 			Action: get,
+		},
+		{
+			Name:   "create",
+			Usage:  "create a todo in the database",
+			Flags:  todoFlags,
+			Action: create,
 		},
 	}
 
