@@ -137,6 +137,33 @@ func markAsDone(c *cli.Context) error {
 	return nil
 }
 
+func delete(c *cli.Context) error {
+	idStr := c.Args().Get(0)
+	if idStr == "" {
+		log.Fatal("ID argument must not be blank")
+	}
+
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	todo, err := service.Get(id)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = service.Delete(todo)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Todo deleted:")
+	fmt.Println(todoToString(todo))
+
+	return nil
+}
+
 func main() {
 	db, err := database.NewRepository()
 	if err != nil {
@@ -191,6 +218,11 @@ func main() {
 			Name:   "done",
 			Usage:  "mark a todo as done",
 			Action: markAsDone,
+		},
+		{
+			Name:   "delete",
+			Usage:  "delete a todo from the database",
+			Action: delete,
 		},
 	}
 
