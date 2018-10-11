@@ -71,6 +71,45 @@ func create(c *cli.Context) error {
 	return nil
 }
 
+func edit(c *cli.Context) error {
+	if c.NumFlags() == 0 {
+		log.Fatal("No --title or --description set; exiting")
+	}
+
+	idStr := c.Args().Get(0)
+	if idStr == "" {
+		log.Fatal("ID argument must not be blank")
+	}
+
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	todo, err := service.Get(id)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if c.IsSet("title") {
+		todo.Title = c.String("title")
+	}
+
+	if c.IsSet("description") {
+		todo.Title = c.String("description")
+	}
+
+	err = service.Edit(todo)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Edited todo:")
+	fmt.Println(todoToString(todo))
+
+	return nil
+}
+
 func main() {
 	db, err := database.NewRepository()
 	if err != nil {
@@ -114,6 +153,12 @@ func main() {
 			Usage:  "create a todo in the database",
 			Flags:  todoFlags,
 			Action: create,
+		},
+		{
+			Name:   "edit",
+			Usage:  "edit a todo in the database",
+			Flags:  todoFlags,
+			Action: edit,
 		},
 	}
 
