@@ -23,7 +23,7 @@ var service gotodo.Service
 func getAll(c *cli.Context) error {
 	var todos []*gotodo.Todo
 
-	if c.NumFlags() > 0 {
+	if c.IsSet("done") {
 		if c.Bool("done") {
 			todos = service.GetFinished()
 		} else {
