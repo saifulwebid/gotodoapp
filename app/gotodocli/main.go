@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/subosito/gotenv"
 	"gopkg.in/urfave/cli.v1"
@@ -37,6 +38,27 @@ func getAll(c *cli.Context) error {
 	return nil
 }
 
+func get(c *cli.Context) error {
+	idStr := c.Args().Get(0)
+	if idStr == "" {
+		log.Fatal("ID argument must not be blank")
+	}
+
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	todo, err := service.Get(id)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(todoToString(todo))
+
+	return nil
+}
+
 func main() {
 	db, err := database.NewRepository()
 	if err != nil {
@@ -58,9 +80,14 @@ func main() {
 	app.Commands = []cli.Command{
 		{
 			Name:   "getall",
-			Usage:  "get all todos on the database",
+			Usage:  "get all todos from the database",
 			Flags:  doneFlags,
 			Action: getAll,
+		},
+		{
+			Name:   "get",
+			Usage:  "get a todo from the database",
+			Action: get,
 		},
 	}
 
