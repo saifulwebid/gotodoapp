@@ -20,7 +20,17 @@ var db gotodo.Repository
 var service gotodo.Service
 
 func getAll(c *cli.Context) error {
-	todos := service.GetAll()
+	var todos []*gotodo.Todo
+
+	if c.NumFlags() > 0 {
+		if c.Bool("done") {
+			todos = service.GetFinished()
+		} else {
+			todos = service.GetPending()
+		}
+	} else {
+		todos = service.GetAll()
+	}
 
 	fmt.Println(todosToString(todos))
 
@@ -35,6 +45,12 @@ func main() {
 
 	service = gotodo.NewService(db)
 
+	doneFlags := []cli.Flag{
+		cli.BoolFlag{
+			Name: "done, d",
+		},
+	}
+
 	app := cli.NewApp()
 
 	app.Name = "gotodocli"
@@ -43,6 +59,7 @@ func main() {
 		{
 			Name:   "getall",
 			Usage:  "get all todos on the database",
+			Flags:  doneFlags,
 			Action: getAll,
 		},
 	}
