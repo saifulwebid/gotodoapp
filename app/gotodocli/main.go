@@ -110,6 +110,33 @@ func edit(c *cli.Context) error {
 	return nil
 }
 
+func markAsDone(c *cli.Context) error {
+	idStr := c.Args().Get(0)
+	if idStr == "" {
+		log.Fatal("ID argument must not be blank")
+	}
+
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	todo, err := service.Get(id)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = service.MarkAsDone(todo)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Todo marked as done:")
+	fmt.Println(todoToString(todo))
+
+	return nil
+}
+
 func main() {
 	db, err := database.NewRepository()
 	if err != nil {
@@ -159,6 +186,11 @@ func main() {
 			Usage:  "edit a todo in the database",
 			Flags:  todoFlags,
 			Action: edit,
+		},
+		{
+			Name:   "done",
+			Usage:  "mark a todo as done",
+			Action: markAsDone,
 		},
 	}
 
